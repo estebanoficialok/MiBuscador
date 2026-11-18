@@ -12,13 +12,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.7'
       - run: npm install -g cordova
       - run: cordova telemetry off
-      - run: yes | sdkmanager --licenses || true
+      - run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
       - run: cordova platform add android --no-telemetry || true
       - run: cordova build android --no-telemetry
       - uses: actions/upload-artifact@v4
