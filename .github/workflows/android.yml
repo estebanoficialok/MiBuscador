@@ -13,7 +13,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - run: npm install -g cordova
-      - run: cordova telemetry off
       - run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
       - run: cordova platform add android --no-telemetry || true
       - run: cordova build android --no-telemetry
