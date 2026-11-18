@@ -17,8 +17,10 @@ jobs:
         with:
           gradle-version: '8.7'
       - run: npm install -g cordova
-      - run: cordova platform add android || true
-      - run: cordova build android
+      - run: cordova telemetry off
+      - run: yes | sdkmanager --licenses || true
+      - run: cordova platform add android --no-telemetry || true
+      - run: cordova build android --no-telemetry
       - uses: actions/upload-artifact@v4
         with:
           name: MiBuscador-APK
