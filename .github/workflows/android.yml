@@ -15,7 +15,7 @@ jobs:
       - run: npm install -g cordova
       - run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
       - run: cordova platform add android --no-telemetry || true
-      - run: cordova build android --no-telemetry
+      - run: cordova plugin add cordova-plugin-inappbrowser && cordova build android --no-telemetry
       - uses: actions/upload-artifact@v4
         with:
           name: MiBuscador-APK
