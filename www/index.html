@@ -3,61 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MiBuscador</title>
+    <title>Unidad Argentina</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: #f4f5f7; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
+        body { background: #f2f8fd; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
         /* Cabecera superior */
         #cabecera {
-            background: #ffffff;
-            padding: 16px 15px;
-            border-bottom: 1px solid #e0e0e0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            background: #e8f3fc;
+            padding: 12px 14px;
+            border-bottom: 1px solid #d0e3f5;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             z-index: 1000;
             transition: all 0.25s ease;
         }
-        #cabecera.compacto {
-            padding: 8px 12px;
-        }
+        #cabecera.compacto { padding: 8px 12px; }
 
-        /* Barra de búsqueda con lupa */
+        .titulo-app {
+            text-align: center;
+            color: #0055a5;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        #cabecera.compacto .titulo-app { display: none; }
+
+        /* Barra de búsqueda con lupa y micrófono */
         .barra-busqueda {
             display: flex;
             align-items: center;
-            border: 1.5px solid #222;
+            border: 1.5px solid #0055a5;
             border-radius: 25px;
-            padding: 8px 14px;
-            margin-bottom: 16px;
+            padding: 7px 14px;
+            margin-bottom: 12px;
             background: #ffffff;
         }
-        #cabecera.compacto .barra-busqueda {
-            margin-bottom: 8px;
-            padding: 5px 12px;
-        }
+        #cabecera.compacto .barra-busqueda { margin-bottom: 8px; padding: 5px 12px; }
+
         .btn-inicio {
             background: none; border: none; font-size: 16px; margin-right: 8px; cursor: pointer; display: none;
         }
-        #cabecera.compacto .btn-inicio {
-            display: block;
-        }
+        #cabecera.compacto .btn-inicio { display: block; }
+
         .barra-busqueda input {
             border: none;
             background: transparent;
             width: 100%;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
-            text-align: center;
             color: #222;
         }
-        .btn-lupa {
+        .btn-icono {
             background: none; border: none; font-size: 18px; cursor: pointer; padding-left: 8px;
         }
 
-        /* Fila de círculos */
+        /* Fila unificada de círculos */
         .circulos {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: flex-start;
             overflow-x: auto;
             gap: 8px;
@@ -69,98 +73,158 @@
             background: none;
             border: none;
             cursor: pointer;
-            min-width: 54px;
+            min-width: 52px;
         }
         .circulo {
-            width: 48px;
-            height: 48px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
-            border: 1px solid #e5e5e5;
+            border: 1px solid #d0e3f5;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 14px;
-            background: #fff;
-            margin-bottom: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-size: 13px;
+            background: #ffffff;
+            margin-bottom: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
-        #cabecera.compacto .circulo {
-            width: 34px;
-            height: 34px;
-            font-size: 12px;
-            margin-bottom: 0;
-        }
-        .etiqueta {
-            font-size: 11px;
-            color: #444;
-            white-space: nowrap;
-        }
-        #cabecera.compacto .etiqueta {
-            display: none;
-        }
+        #cabecera.compacto .circulo { width: 32px; height: 32px; font-size: 11px; margin-bottom: 0; }
+        .etiqueta { font-size: 11px; color: #333; white-space: nowrap; }
+        #cabecera.compacto .etiqueta { display: none; }
 
-        /* Área inferior */
-        #zona-inferior {
+        /* Área central integrada */
+        #zona-central {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            background: #f7fbff;
+        }
+        .bienvenida {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #777;
+            color: #557;
             font-size: 14px;
             text-align: center;
             padding: 20px;
+        }
+        #visor-web {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+        #resultados-propios {
+            padding: 15px;
+            display: none;
+        }
+        .tarjeta-resultado {
+            background: #ffffff;
+            border: 1px solid #dceaf7;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            cursor: pointer;
+        }
+        .tarjeta-resultado h3 { color: #0055a5; font-size: 16px; margin-bottom: 5px; }
+        .tarjeta-resultado p { color: #444; font-size: 13px; line-height: 1.4; }
+
+        /* Banner publicitario inferior */
+        #banner-publicidad {
+            background: #0055a5;
+            color: #ffffff;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .texto-movil {
+            display: inline-block;
+            padding-left: 100%;
+            animation: desplazar 18s linear infinite;
+        }
+        @keyframes desplazar {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
         }
     </style>
 </head>
 <body>
 
     <div id="cabecera">
+        <div class="titulo-app">Unidad Argentina</div>
         <form class="barra-busqueda" onsubmit="ejecutarBusqueda(event)">
-            <button type="button" class="btn-inicio" onclick="restaurarPantalla()" title="Volver arriba">🏠</button>
-            <input type="text" id="textoBusqueda" placeholder="Escribe lo que buscas...">
-            <button type="submit" class="btn-lupa">🔍</button>
+            <button type="button" class="btn-inicio" onclick="restaurarPantalla()" title="Inicio">🏠</button>
+            <input type="text" id="textoBusqueda" placeholder="Buscar en Unidad Argentina...">
+            <button type="submit" class="btn-icono" title="Buscar">🔍</button>
+            <button type="button" class="btn-icono" onclick="buscarPorVoz()" title="Voz">🎤</button>
         </form>
 
         <div class="circulos" id="listaCirculos">
-            <button class="item" onclick="abrirAbajo('https://nytimes.com')">
+            <button class="item" onclick="abrirEnCentro('https://nytimes.com')">
                 <div class="circulo" style="color:#000;">NY</div>
                 <span class="etiqueta">NY Times</span>
             </button>
-            <button class="item" onclick="abrirAbajo('https://lanacion.com.ar')">
+            <button class="item" onclick="abrirEnCentro('https://lanacion.com.ar')">
                 <div class="circulo" style="color:#0055a5;">LN</div>
                 <span class="etiqueta">La Nación</span>
             </button>
-            <button class="item" onclick="abrirAbajo('https://wa.me')">
+            <button class="item" onclick="abrirExterno('https://wa.me')">
                 <div class="circulo" style="color:#25D366;">WA</div>
                 <span class="etiqueta">WhatsApp</span>
             </button>
-            <button class="item" onclick="abrirAbajo('https://instagram.com')">
+            <button class="item" onclick="abrirExterno('https://instagram.com')">
                 <div class="circulo" style="color:#E1306C;">IG</div>
                 <span class="etiqueta">Instagram</span>
             </button>
-            <button class="item" onclick="abrirAbajo('https://youtube.com')">
+            <button class="item" onclick="abrirEnCentro('https://youtube.com')">
                 <div class="circulo" style="color:#FF0000;">YT</div>
                 <span class="etiqueta">YouTube</span>
             </button>
             <button class="item" onclick="agregarSitio()">
-                <div class="circulo" style="color:#333; font-size:20px;">+</div>
+                <div class="circulo" style="color:#0055a5; font-size:20px;">+</div>
                 <span class="etiqueta">Agregar</span>
             </button>
         </div>
     </div>
 
-    <div id="zona-inferior">
-        <p>Toca un acceso directo arriba o escribe en tu buscador</p>
+    <div id="zona-central">
+        <div class="bienvenida" id="pantalla-inicio">
+            <p>Bienvenido a <strong>Unidad Argentina</strong>.<br>Escribí tu búsqueda arriba o elegí un acceso directo.</p>
+        </div>
+        <div id="resultados-propios"></div>
+        <iframe id="visor-web"></iframe>
+    </div>
+
+    <div id="banner-publicidad">
+        <div class="texto-movil">
+            ★ UNIDAD ARGENTINA • RIVER PLATE • MEGATLÓN • DRIVING NORTE • PORTAL NACIONAL ★
+        </div>
     </div>
 
     <script src="cordova.js"></script>
     <script>
-        function abrirAbajo(url) {
+        function abrirEnCentro(url) {
             document.getElementById('cabecera').classList.add('compacto');
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            document.getElementById('resultados-propios').style.display = 'none';
+            var visor = document.getElementById('visor-web');
+            visor.style.display = 'block';
+            visor.src = url;
+        }
+
+        function abrirExterno(url) {
             if (window.cordova && cordova.InAppBrowser) {
-                cordova.InAppBrowser.open(url, '_blank', 'location=yes,zoom=no,toolbarcolor=#ffffff');
+                cordova.InAppBrowser.open(url, '_system');
             } else {
                 window.open(url, '_blank');
             }
@@ -168,20 +232,68 @@
 
         function restaurarPantalla() {
             document.getElementById('cabecera').classList.remove('compacto');
+            document.getElementById('visor-web').style.display = 'none';
+            document.getElementById('visor-web').src = '';
+            document.getElementById('resultados-propios').style.display = 'none';
+            document.getElementById('pantalla-inicio').style.display = 'flex';
         }
 
         function ejecutarBusqueda(e) {
             e.preventDefault();
             var q = document.getElementById('textoBusqueda').value.trim();
-            if (q !== "") {
-                // Si escribe una dirección web directa (ej: ole.com.ar) la abre, si no busca
-                if (q.includes('.') && !q.includes(' ')) {
-                    var destino = q.startsWith('http') ? q : 'https://' + q;
-                    abrirAbajo(destino);
-                } else {
-                    abrirAbajo('https://duckduckgo.com' + encodeURIComponent(q));
-                }
+            if (!q) return;
+
+            if (q.includes('.') && !q.includes(' ')) {
+                var destino = q.startsWith('http') ? q : 'https://' + q;
+                abrirEnCentro(destino);
+                return;
             }
+
+            document.getElementById('cabecera').classList.add('compacto');
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            document.getElementById('visor-web').style.display = 'none';
+
+            var cont = document.getElementById('resultados-propios');
+            cont.style.display = 'block';
+            cont.innerHTML = '<p style="color:#0055a5; margin-bottom:12px;">Buscando en la red: <strong>' + q + '</strong>...</p>';
+
+            fetch('https://wikipedia.org' + encodeURIComponent(q) + '&utf8=&format=json&origin=*')
+                .then(r => r.json())
+                .then(data => {
+                    var lista = data.query.search;
+                    if (!lista.length) {
+                        cont.innerHTML = '<p>No se encontraron resultados directos para "' + q + '".</p>';
+
+                        return;
+                    }
+                    var html = '';
+                    lista.forEach(item => {
+                        var link = 'https://wikipedia.org' + encodeURIComponent(item.title.replace(/ /g, '_'));
+                        html += '<div class="tarjeta-resultado" onclick="abrirEnCentro(\'' + link + '\')">' +
+                                '<h3>' + item.title + '</h3>' +
+                                '<p>' + item.snippet + '...</p>' +
+                                '</div>';
+                    });
+                    cont.innerHTML = html;
+                })
+                .catch(() => {
+                    cont.innerHTML = '<p>Error de conexión al buscar. Revisá tus datos o Wi-Fi.</p>';
+                });
+        }
+
+        function buscarPorVoz() {
+            var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Tu navegador actual no soporta búsqueda por voz.');
+                return;
+            }
+            var rec = new SpeechRecognition();
+            rec.lang = 'es-AR';
+            rec.onresult = function(event) {
+                document.getElementById('textoBusqueda').value = event.results.transcript;
+                ejecutarBusqueda(new Event('submit'));
+            };
+            rec.start();
         }
 
         function agregarSitio() {
@@ -197,8 +309,8 @@
 
             var nuevoBtn = document.createElement('button');
             nuevoBtn.className = 'item';
-            nuevoBtn.onclick = function() { abrirAbajo(url); };
-            nuevoBtn.innerHTML = '<div class="circulo" style="color:#333;">' + iniciales + '</div><span class="etiqueta">' + nombre + '</span>';
+            nuevoBtn.onclick = function() { abrirEnCentro(url); };
+            nuevoBtn.innerHTML = '<div class="circulo" style="color:#0055a5;">' + iniciales + '</div><span class="etiqueta">' + nombre + '</span>';
 
             contenedor.insertBefore(nuevoBtn, btnAgregar);
         }
