@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MiBuscador</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #f4f5f7; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Cabecera superior */
+        #cabecera {
+            background: #ffffff;
+            padding: 16px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            z-index: 1000;
+            transition: all 0.25s ease;
+        }
+        #cabecera.compacto {
+            padding: 8px 12px;
+        }
+
+        /* Barra de búsqueda con lupa */
+        .barra-busqueda {
+            display: flex;
+            align-items: center;
+            border: 1.5px solid #222;
+            border-radius: 25px;
+            padding: 8px 14px;
+            margin-bottom: 16px;
+            background: #ffffff;
+        }
+        #cabecera.compacto .barra-busqueda {
+            margin-bottom: 8px;
+            padding: 5px 12px;
+        }
+        .btn-inicio {
+            background: none; border: none; font-size: 16px; margin-right: 8px; cursor: pointer; display: none;
+        }
+        #cabecera.compacto .btn-inicio {
+            display: block;
+        }
+        .barra-busqueda input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            color: #222;
+        }
+        .btn-lupa {
+            background: none; border: none; font-size: 18px; cursor: pointer; padding-left: 8px;
+        }
+
+        /* Fila de círculos */
+        .circulos {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            overflow-x: auto;
+            gap: 8px;
+        }
+        .item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            min-width: 54px;
+        }
+        .circulo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            background: #fff;
+            margin-bottom: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        #cabecera.compacto .circulo {
+            width: 34px;
+            height: 34px;
+            font-size: 12px;
+            margin-bottom: 0;
+        }
+        .etiqueta {
+            font-size: 11px;
+            color: #444;
+            white-space: nowrap;
+        }
+        #cabecera.compacto .etiqueta {
+            display: none;
+        }
+
+        /* Área inferior */
+        #zona-inferior {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cabecera">
+        <form class="barra-busqueda" onsubmit="ejecutarBusqueda(event)">
+            <button type="button" class="btn-inicio" onclick="restaurarPantalla()" title="Volver arriba">🏠</button>
+            <input type="text" id="textoBusqueda" placeholder="Escribe lo que buscas...">
+            <button type="submit" class="btn-lupa">🔍</button>
+        </form>
+
+        <div class="circulos" id="listaCirculos">
+            <button class="item" onclick="abrirAbajo('https://nytimes.com')">
+                <div class="circulo" style="color:#000;">NY</div>
+                <span class="etiqueta">NY Times</span>
+            </button>
+            <button class="item" onclick="abrirAbajo('https://lanacion.com.ar')">
+                <div class="circulo" style="color:#0055a5;">LN</div>
+                <span class="etiqueta">La Nación</span>
+            </button>
+            <button class="item" onclick="abrirAbajo('https://wa.me')">
+                <div class="circulo" style="color:#25D366;">WA</div>
+                <span class="etiqueta">WhatsApp</span>
+            </button>
+            <button class="item" onclick="abrirAbajo('https://instagram.com')">
+                <div class="circulo" style="color:#E1306C;">IG</div>
+                <span class="etiqueta">Instagram</span>
+            </button>
+            <button class="item" onclick="abrirAbajo('https://youtube.com')">
+                <div class="circulo" style="color:#FF0000;">YT</div>
+                <span class="etiqueta">YouTube</span>
+            </button>
+            <button class="item" onclick="agregarSitio()">
+                <div class="circulo" style="color:#333; font-size:20px;">+</div>
+                <span class="etiqueta">Agregar</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="zona-inferior">
+        <p>Toca un acceso directo arriba o escribe en tu buscador</p>
+    </div>
+
+    <script src="cordova.js"></script>
+    <script>
+        function abrirAbajo(url) {
+            document.getElementById('cabecera').classList.add('compacto');
+            if (window.cordova && cordova.InAppBrowser) {
+                cordova.InAppBrowser.open(url, '_blank', 'location=yes,zoom=no,toolbarcolor=#ffffff');
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        function restaurarPantalla() {
+            document.getElementById('cabecera').classList.remove('compacto');
+        }
+
+        function ejecutarBusqueda(e) {
+            e.preventDefault();
+            var q = document.getElementById('textoBusqueda').value.trim();
+            if (q !== "") {
+                // Si escribe una dirección web directa (ej: ole.com.ar) la abre, si no busca
+                if (q.includes('.') && !q.includes(' ')) {
+                    var destino = q.startsWith('http') ? q : 'https://' + q;
+                    abrirAbajo(destino);
+                } else {
+                    abrirAbajo('https://duckduckgo.com' + encodeURIComponent(q));
+                }
+            }
+        }
+
+        function agregarSitio() {
+            var nombre = prompt("Nombre corto (ej: Olé):");
+            if (!nombre) return;
+            var url = prompt("Dirección web (ej: ole.com.ar):");
+            if (!url) return;
+            if (!url.startsWith('http')) url = 'https://' + url;
+
+            var iniciales = nombre.substring(0, 2).toUpperCase();
+            var contenedor = document.getElementById('listaCirculos');
+            var btnAgregar = contenedor.lastElementChild;
+
+            var nuevoBtn = document.createElement('button');
+            nuevoBtn.className = 'item';
+            nuevoBtn.onclick = function() { abrirAbajo(url); };
+            nuevoBtn.innerHTML = '<div class="circulo" style="color:#333;">' + iniciales + '</div><span class="etiqueta">' + nombre + '</span>';
+
+            contenedor.insertBefore(nuevoBtn, btnAgregar);
+        }
+    </script>
+</body>
+</html>
