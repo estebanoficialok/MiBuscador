@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unidad Argentina</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: #f4f7fb; display: flex; flex-direction: column; }
+        #cabecera { background: #e8f3fc; border-bottom: 1px solid #cfe2f3; padding: 8px 10px 6px 10px; flex-shrink: 0; z-index: 100; }
+        .fila-superior { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .marca-logo { font-weight: 800; font-size: 15px; color: #004a99; white-space: nowrap; cursor: pointer; padding: 4px 7px; border-radius: 8px; background: rgba(255,255,255,0.8); border: 1px solid #c6def5; flex-shrink: 0; }
+        .marca-logo span { color: #1e88e5; }
+        .barra-busqueda { flex: 1; display: flex; align-items: center; background: #fff; border: 1.5px solid #4a89dc; border-radius: 22px; padding: 4px 10px; height: 36px; }
+        .barra-busqueda input { flex: 1; border: none; outline: none; font-size: 14px; color: #222; background: transparent; min-width: 0; }
+        .btn-icono-barra { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 3px 4px; }
+        #listaCirculos { display: flex; align-items: center; gap: 10px; overflow-x: auto; padding: 2px 2px 4px 2px; scrollbar-width: none; }
+        #listaCirculos::-webkit-scrollbar { display: none; }
+        .item-app { width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 1px solid #d4e3f3; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .item-app:active { transform: scale(0.92); }
+        .item-app svg { width: 22px; height: 22px; }
+        #zona-central { flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; background: #f7fbff; }
+        #pantalla-inicio { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 12px; overflow: hidden; }
+        .titulo-seccion { font-size: 12px; font-weight: 700; color: #4b6b88; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; align-self: flex-start; padding-left: 4px; }
+        .carrusel-contenedor { width: 100%; flex: 1; max-height: 360px; position: relative; overflow: hidden; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,50,100,0.10); background: #fff; border: 1px solid #d8e6f5; }
+        .carrusel-pista { display: flex; height: 100%; width: 100%; transition: transform 0.45s cubic-bezier(0.25,0.8,0.25,1); }
+        .tarjeta-diario { min-width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; cursor: pointer; }
+        .diario-header { display: flex; align-items: center; justify-content: space-between; }
+        .diario-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.22); color: #fff; }
+        .diario-nombre { font-size: 28px; font-weight: 900; color: #fff; margin: 12px 0 6px 0; }
+        .diario-desc { font-size: 14px; color: rgba(255,255,255,0.92); line-height: 1.4; }
+        .diario-boton { align-self: flex-start; background: #fff; color: #111; font-weight: 700; font-size: 13px; padding: 9px 16px; border-radius: 20px; border: none; }
+        .carrusel-puntos { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
+        .punto { width: 8px; height: 8px; border-radius: 50%; background: #c2d6eb; cursor: pointer; transition: all 0.3s; }
+        .punto.activo { width: 22px; border-radius: 4px; background: #0055a5; }
+        #visor-interno { display: none; flex: 1; flex-direction: column; height: 100%; width: 100%; background: #fff; }
+        .barra-visor { display: flex; align-items: center; justify-content: space-between; background: #f0f6fc; border-bottom: 1px solid #d5e4f3; padding: 5px 10px; font-size: 12px; color: #335; flex-shrink: 0; }
+        .barra-visor span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 68%; font-weight: 600; }
+        .btn-cerrar-visor { background: #0055a5; color: #fff; border: none; border-radius: 14px; padding: 4px 12px; font-size: 11px; font-weight: 700; cursor: pointer; }
+        #marco-web { flex: 1; width: 100%; border: none; background: #fff; }
+        #resultados-propios { display: none; flex: 1; overflow-y: auto; padding: 12px; flex-direction: column; gap: 10px; }
+        .tarjeta-resultado { background: #fff; border: 1px solid #dceaf7; border-radius: 12px; padding: 12px; cursor: pointer; }
+        .tarjeta-resultado h4 { color: #0055a5; font-size: 15px; margin-bottom: 4px; }
+        .tarjeta-resultado p { color: #444; font-size: 13px; line-height: 1.35; }
+        #banner-publicidad { height: 36px; background: linear-gradient(90deg, #003b7a, #0055a5, #003b7a); color: #fff; display: flex; align-items: center; overflow: hidden; flex-shrink: 0; border-top: 1px solid #002b59; z-index: 100; }
+        .texto-movil { white-space: nowrap; font-size: 12px; font-weight: 700; letter-spacing: 0.8px; padding-left: 100%; animation: deslizarBanner 18s linear infinite; }
+        @keyframes deslizarBanner { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+    </style>
+</head>
+
+<body>
+    <header id="cabecera">
+        <div class="fila-superior">
+            <div class="marca-logo" onclick="volverAlInicio()">Unidad <span>AR</span></div>
+            <form class="barra-busqueda" onsubmit="ejecutarBusqueda(event)">
+                <input type="text" id="textoBusqueda" placeholder="Buscar en Unidad Argentina..." autocomplete="off">
+                <button type="submit" class="btn-icono-barra" aria-label="Buscar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+                <button type="button" class="btn-icono-barra" onclick="buscarPorVoz()" aria-label="Voz">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                </button>
+            </form>
+        </div>
+        <div id="listaCirculos">
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://youtube.com', 'YouTube')"><svg viewBox="0 0 24 24"><path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8z"/><path fill="#FFF" d="M9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg></button>
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://instagram.com', 'Instagram')"><svg viewBox="0 0 24 24"><defs><linearGradient id="ig" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#dc2743"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#ig)"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3" fill="#fff"/></svg></button>
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://whatsapp.com', 'WhatsApp')"><svg viewBox="0 0 24 24"><path fill="#25D366" d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/><path fill="#FFF" d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.2-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3z"/></svg></button>
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://google.com', 'Google')"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.7 12.3c0-.7-.1-1.4-.2-2.1H12v4.5h6.6c-.3 1.5-1.1 2.8-2.4 3.7v3h3.9c2.3-2.1 3.6-5.2 3.6-9.1z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1C3.3 21.3 7.3 24 12 24z"/><path fill="#FBBC05" d="M5.3 14.2c-.2-.7-.4-1.5-.4-2.2s.1-1.5.4-2.2V6.6H1.3C.5 8.2 0 10.1 0 12s.5 3.8 1.3 5.4l4-3.2z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8L20 3.2C18 1.2 15.2 0 12 0 7.3 0 3.3 2.7 1.3 6.6l4 3.1c.9-2.8 3.6-4.9 6.7-4.9z"/></svg></button>
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://facebook.com', 'Facebook')"><svg viewBox="0 0 24 24"><path fill="#1877F2" d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.2h3.3l-.5 3.5h-2.8V24C19.6 23 24 18.1 24 12.1z"/></svg></button>
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://x.com', 'X')"><svg viewBox="0 0 24 24"><path fill="#000" d="M18.2 2.2h3.3l-7.2 8.3 8.5 11.2h-6.6l-5.2-6.8-6 6.8H1.7l7.7-8.8L1.3 2.2h6.8l4.7 6.2 5.4-6.2zm-1.2 17.5h1.8L7.1 4.1H5.1l11.9 15.6z"/></svg></button>
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://lanacion.com.ar', 'La Nación')"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#006998"/><text x="12" y="16" font-size="11" font-weight="900" fill="#fff" text-anchor="middle" font-family="Georgia,serif">LN</text></svg></button>
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://clarin.com', 'Clarín')"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#d9001b"/><text x="12" y="16.5" font-size="13" font-weight="900" fill="#fff" text-anchor="middle" font-family="Georgia,serif">C</text></svg></button>
+            <button class="item-app" onclick="abrirEnMismaPantalla('https://infobae.com', 'Infobae')"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="12" fill="#f36f21"/><text x="12" y="16" font-size="11" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial,sans-serif">ib</text></svg></button>
+            <button class="item-app" id="btnAgregar" onclick="agregarSitio()"><svg viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+        </div>
+    </header>
+    <main id="zona-central">
+        <section id="pantalla-inicio">
+            <div class="titulo-seccion">Portales y Diarios en Vivo</div>
+            <div class="carrusel-contenedor" id="carruselBox">
+                <div class="carrusel-pista" id="carruselPista">
+                    <div class="tarjeta-diario" style="background:linear-gradient(135deg,#004e75,#0077b3)" onclick="abrirEnMismaPantalla('https://lanacion.com.ar','La Nación')"><div class="diario-header"><span class="diario-badge">PORTAL NACIONAL</span><span class="diario-badge">EN VIVO</span></div><div><div class="diario-nombre">LA NACIÓN</div><p class="diario-desc">Últimas noticias de Argentina, política, economía, deportes y actualidad al instante.</p></div><button class="diario-boton">Abrir portada aquí →</button></div>
+                    <div class="tarjeta-diario" style="background:linear-gradient(135deg,#a80014,#e31b23)" onclick="abrirEnMismaPantalla('https://clarin.com','Clarín')"><div class="diario-header"><span class="diario-badge">DIARIO ARGENTINO</span><span class="diario-badge">ÚLTIMO MOMENTO</span></div><div><div class="diario-nombre">Clarín</div><p class="diario-desc">Toda la información del país y el mundo, espectáculos, sociedad y cobertura en vivo.</p></div><button class="diario-boton">Abrir portada aquí →</button></div>
+                    <div class="tarjeta-diario" style="background:linear-gradient(135deg,#c9510c,#f36f21)" onclick="abrirEnMismaPantalla('https://infobae.com','Infobae')"><div class="diario-header"><span class="diario-badge">NOTICIAS 24HS</span><span class="diario-badge">DESTACADO</span></div><div><div class="diario-nombre">infobae</div><p class="diario-desc">Cobertura minuto a minuto de Argentina y Latinoamérica, economía, tecno y tendencias.</p></div><button class="diario-boton">Abrir portada aquí →</button></div>
+                    <div class="tarjeta-diario" style="background:linear-gradient(135deg,#0b6623,#18a53a)" onclick="abrirEnMismaPantalla('https://ole.com.ar','Olé')"><div class="diario-header"><span class="diario-badge">DEPORTES</span><span class="diario-badge">FÚTBOL ARGENTINO</span></div><div><div class="diario-nombre">Olé</div><p class="diario-desc">River, Boca, Selección Argentina, resultados en vivo y toda la pasión del deporte.</p></div><button class="diario-boton">Abrir portada aquí →</button></div>
+                    <div class="tarjeta-diario" style="background:linear-gradient(135deg,#1a1a1a,#3d3d3d)" onclick="abrirEnMismaPantalla('https://nytimes.com New York Times')"><div class="diario-header"><span class="diario-badge">INTERNACIONAL</span><span class="diario-badge">EN ESPAÑOL</span></div><div><div class="diario-nombre">The New York Times</div><p class="diario-desc">Análisis global, reportajes especiales y noticias internacionales en español.</p></div><button class="diario-boton">Abrir portada aquí →</button></div>
+                </div>
+            </div>
+            <div class="carrusel-puntos" id="carruselPuntos"></div>
+        </section>
+        <section id="visor-interno"><div class="barra-visor"><span id="titulo-visor">Cargando...</span><button class="btn-cerrar-visor" onclick="volverAlInicio()">✕ Cerrar vista</button></div><iframe id="marco-web" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe></section>
+        <section id="resultados-propios"></section>
+    </main>
+    <footer id="banner-publicidad"><div class="texto-movil">★ UNIDAD ARGENTINA • RIVER PLATE • MEGATLÓN • DRIVING NORTE • PORTAL NACIONAL ★</div></footer>
+    <script src="cordova.js"></script>
+    <script>
+        const pista=document.getElementById('carruselPista'),puntosCont=document.getElementById('carruselPuntos'),totalDiarios=pista.children.length;let indiceActual=0,intervaloCarrusel=null;
+        for(let i=0;i<totalDiarios;i++){const p=document.createElement('div');p.className='punto'+(i===0?' activo':'');p.onclick=()=>irADiario(i);puntosCont.appendChild(p);}
+        function irADiario(i){indiceActual=(i+totalDiarios)%totalDiarios;pista.style.transform=`translateX(-${indiceActual*100}%)`;Array.from(puntosCont.children).forEach((p,idx)=>p.classList.toggle('activo',idx===indiceActual));}
+        function iniciarCarrusel(){detenerCarrusel();intervaloCarrusel=setInterval(()=>irADiario(indiceActual+1),3000);}
+        function detenerCarrusel(){if(intervaloCarrusel)clearInterval(intervaloCarrusel);}
+        let tx=0;const cBox=document.getElementById('carruselBox');
+
+        cBox.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;detenerCarrusel();},{passive:true});
+        cBox.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>40)irADiario(d>0?indiceActual+1:indiceActual-1);iniciarCarrusel();},{passive:true});
+        iniciarCarrusel();
+        let ventanaCordova=null;
+        function abrirEnMismaPantalla(url,titulo){detenerCarrusel();document.getElementById('pantalla-inicio').style.display='none';document.getElementById('resultados-propios').style.display='none';const v=document.getElementById('visor-interno'),m=document.getElementById('marco-web');document.getElementById('titulo-visor').textContent=titulo||url;v.style.display='flex';m.src=url;if(window.cordova&&cordova.InAppBrowser){if(ventanaCordova)ventanaCordova.close();ventanaCordova=cordova.InAppBrowser.open(url,'_blank','location=no,zoom=no,hardwareback=yes,toolbarcolor=#e8f3fc,closebuttoncaption=← Volver a Unidad AR,closebuttoncolor=#0055a5');ventanaCordova.addEventListener('exit',volverAlInicio);}}
+        function volverAlInicio(){if(ventanaCordova){ventanaCordova.close();ventanaCordova=null;}document.getElementById('marco-web').src='about:blank';document.getElementById('visor-interno').style.display='none';document.getElementById('resultados-propios').style.display='none';document.getElementById('pantalla-inicio').style.display='flex';iniciarCarrusel();}
+        function ejecutarBusqueda(e){if(e)e.preventDefault();const q=document.getElementById('textoBusqueda').value.trim();if(!q)return;detenerCarrusel();document.getElementById('pantalla-inicio').style.display='none';document.getElementById('visor-interno').style.display='none';const cont=document.getElementById('resultados-propios');cont.style.display='flex';cont.innerHTML='<p style="color:#557;font-size:13px;">Buscando "'+q+'"...</p>';fetch('https://wikipedia.org*').then(r=>r.json()).then(d=>{cont.innerHTML='';const cw=document.createElement('div');cw.className='tarjeta-resultado';cw.style.borderColor='#4a89dc';cw.innerHTML='<h4>🔎 Ver resultados web de "'+q+'"</h4><p>Abrir búsqueda completa dentro de esta pantalla.</p>';cw.onclick=()=>abrirEnMismaPantalla('https://bing.com: '+q);cont.appendChild(cw);((d.query&&d.query.search)||[]).forEach(it=>{const div=document.createElement('div');div.className='tarjeta-resultado';div.innerHTML='<h4>'+it.title+'</h4><p>'+it.snippet+'...</p>';div.onclick=()=>abrirEnMismaPantalla('https://wikipedia.org);cont.appendChild(div);});}).catch(()=>{cont.innerHTML='<p style="color:#c00;">Error de conexión al buscar.</p>';});}
+        function buscarPorVoz(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Tu navegador no soporta búsqueda por voz.');return;}const rec=new SR();rec.lang='es-AR';rec.onresult=ev=>{document.getElementById('textoBusqueda').value=ev.results[0][0].transcript;ejecutarBusqueda();};rec.start();}
+        function agregarSitio(){const n=prompt("Nombre corto (ej: Perfil):");if(!n)return;let u=prompt("Dirección web (ej: perfil.com):");if(!u)return;if(!u.startsWith('http'))u='https://'+u;const c=document.getElementById('listaCirculos'),b=document.getElementById('btnAgregar'),nb=document.createElement('button');nb.className='item-app';nb.style.fontWeight='800';nb.style.fontSize='13px';nb.style.color='#0055a5';nb.textContent=n.substring(0,2).toUpperCase();nb.onclick=()=>abrirEnMismaPantalla(u,n);c.insertBefore(nb,b);}
+    </script>
+</body>
+</html>
+
